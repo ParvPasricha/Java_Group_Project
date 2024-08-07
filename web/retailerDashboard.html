@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Retailer Dashboard</title>
+</head>
+<body>
+    <h1>Retailer Dashboard</h1>
+
+    <h2>Add Item to Inventory</h2>
+    <form action="inventory" method="post">
+        <input type="hidden" name="action" value="add">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required><br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <label for="expirationDate">Expiration Date:</label>
+        <input type="date" id="expirationDate" name="expirationDate" required><br>
+        <input type="submit" value="Add Item">
+    </form>
+
+    <h2>Update Item Quantity</h2>
+    <form action="inventory" method="post">
+        <input type="hidden" name="action" value="update">
+        <label for="itemId">Item ID:</label>
+        <input type="number" id="itemId" name="itemId" required><br>
+        <label for="quantity">New Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <input type="submit" value="Update Quantity">
+    </form>
+
+    <h2>View Inventory</h2>
+    <a href="inventory?action=view">View My Inventory</a>
+</body>
+</html>

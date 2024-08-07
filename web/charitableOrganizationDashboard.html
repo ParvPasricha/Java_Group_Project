@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Charitable Organization Dashboard</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">Food Waste Reduction</a>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Charitable Organization Dashboard</h1>
+        <h2>Available Surplus Items for Donation</h2>
+        <!-- Display surplus items for donation here -->
+        <form action="charity" method="post">
+            <input type="hidden" name="action" value="claimItem">
+            <label for="itemId">Item ID:</label>
+            <input type="text" id="itemId" name="itemId" required><br>
+            <input type="submit" value="Claim Item" class="btn btn-primary">
+        </form>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Food Waste Reduction Platform. All rights reserved.</p>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>
