@@ -1,0 +1,80 @@
+package model;
+
+import java.sql.Date;
+
+public class InventoryItem {
+    private int itemId;
+    private String itemName;
+    private int quantity;
+    private Date expirationDate;
+    private boolean isSurplus;
+    private boolean isForDonation;
+    private boolean isForSale;
+    private double price; // New field for price
+
+    // Getters and setters for all fields
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public boolean isSurplus() {
+        return isSurplus;
+    }
+
+    public void setSurplus(boolean surplus) {
+        isSurplus = surplus;
+    }
+
+    public boolean isForDonation() {
+        return isForDonation;
+    }
+
+    public void setForDonation(boolean forDonation) {
+        isForDonation = forDonation;
+    }
+
+    public boolean isForSale() {
+        return isForSale;
+    }
+
+    public void setForSale(boolean forSale) {
+        isForSale = forSale;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
