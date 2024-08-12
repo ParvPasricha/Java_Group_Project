@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .register-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .register-container h2 {
+            margin-bottom: 1rem;
+        }
+        .register-container label {
+            display: block;
+            margin-bottom: .5rem;
+        }
+        .register-container input {
+            width: 100%;
+            padding: .5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .register-container button {
+            width: 100%;
+            padding: .75rem;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .register-container button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register</h2>
+        <form action="register" method="post">
+            <div class="error-message" id="error-message">
+                <!-- Error message will be dynamically inserted here -->
+            </div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="user_type">User Type:</label>
+            <input type="text" id="user_type" name="user_type" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+    <script>
+        // Function to display error messages
+        function displayErrorMessage(message) {
+            const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.textContent = message;
+        }
+
+        // Extract error parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            const errorCode = urlParams.get('error');
+            if (errorCode === '1') {
+                displayErrorMessage('Registration failed. Please try again.');
+            } else if (errorCode === '2') {
+                displayErrorMessage('There was a server error. Please try again later.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Retailer Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .surplus {
+            background-color: #ffcccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/Final_java_project/logout">Home</a></li> <!-- Home button now logs out -->
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Retailer Dashboard</h1>
+
+    <h2>Add Item to Inventory</h2>
+    <form action="inventory" method="post">
+        <input type="hidden" name="action" value="add">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required><br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <label for="expirationDate">Expiration Date:</label>
+        <input type="date" id="expirationDate" name="expirationDate" required><br>
+        <input type="submit" value="Add Item">
+    </form>
+
+    <h2>Update Item Quantity</h2>
+    <form action="inventory" method="post">
+        <input type="hidden" name="action" value="update">
+        <label for="itemId">Item ID:</label>
+        <input type="number" id="itemId" name="itemId" required><br>
+        <label for="quantity">New Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <input type="submit" value="Update Quantity">
+    </form>
+
+    <h2>Mark Surplus Item</h2>
+    <form action="inventory" method="post">
+        <input type="hidden" name="action" value="markSurplus">
+        <label for="itemId">Item ID:</label>
+        <input type="number" id="itemId" name="itemId" required><br>
+        <label for="forDonation">For Donation:</label>
+        <input type="checkbox" id="forDonation" name="forDonation"><br>
+        <label for="forSale">For Sale:</label>
+        <input type="checkbox" id="forSale" name="forSale"><br>
+        <div id="priceInput" style="display:none;">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" value="0.00"><br>
+        </div>
+        <input type="submit" value="Mark Surplus">
+    </form>
+
+    
+
+    <h2>View Inventory</h2>
+    <button onclick="loadInventory()">View All Items</button>
+    <button onclick="loadSurplus()">View Surplus Items</button>
+
+    <div id="notification"></div>
+
+    <table id="inventoryTable">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Expiration Date</th>
+                <th>Surplus</th>
+                <th>For Donation</th>
+                <th>For Sale</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Inventory items will be loaded here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('forSale').addEventListener('change', function() {
+            const priceInputDiv = document.getElementById('priceInput');
+            if (this.checked) {
+                priceInputDiv.style.display = 'block';
+            } else {
+                priceInputDiv.style.display = 'none';
+            }
+        });
+
+        function loadInventory() {
+            console.log("Loading all inventory items...");
+            fetch('/Final_java_project/inventory')  // Ensure this matches your server's deployment context
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    displayItems(data);
+                })
+                .catch(error => console.error('Error loading inventory:', error));
+        }
+
+        function loadSurplus() {
+            console.log("Loading surplus inventory items...");
+            fetch('/Final_java_project/inventory?view=surplus')  // Ensure this matches your server's deployment context
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    displayItems(data);
+                })
+                .catch(error => console.error('Error loading surplus items:', error));
+        }
+
+        function displayItems(items) {
+            const tbody = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = ''; // Clear existing rows
+            let surplusCount = 0;
+
+            items.forEach(item => {
+                const row = tbody.insertRow();
+                row.className = item.surplus ? 'surplus' : '';
+                row.insertCell().textContent = item.itemId;
+                row.insertCell().textContent = item.itemName;
+                row.insertCell().textContent = item.quantity;
+                row.insertCell().textContent = item.expirationDate;
+                row.insertCell().textContent = item.surplus ? 'Yes' : 'No';
+                row.insertCell().textContent = item.forDonation ? 'Yes' : 'No';
+                row.insertCell().textContent = item.forSale ? 'Yes' : 'No';
+                row.insertCell().textContent = item.forSale ? item.price.toFixed(2) : 'N/A';
+
+                if (item.surplus) surplusCount++;
+            });
+
+            const notificationDiv = document.getElementById('notification');
+            notificationDiv.textContent = surplusCount > 0 ? `There are ${surplusCount} surplus items.` : 'No surplus items currently.';
+        }
+
+        document.addEventListener("DOMContentLoaded", loadInventory);
+    </script>
+</body>
+</html>

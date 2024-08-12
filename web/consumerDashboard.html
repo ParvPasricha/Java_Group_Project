@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Consumer Dashboard</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.jsp">Grab&Go</a>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="/Final_java_project/logout">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Consumer Dashboard</h1>
+        <h2>Available Items for Sale</h2>
+        <table id="saleItemsTable">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Price</th>
+                    <th>Available Quantity</th> <!-- New column for available quantity -->
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sale items will be loaded here -->
+            </tbody>
+        </table>
+
+        <h2>Subscribe for Notifications</h2>
+        <form action="/Final_java_project/subscribe" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone"><br>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required><br>
+            <label for="preference">Food Preference:</label>
+            <input type="text" id="preference" name="preference"><br>
+            <label for="communicationMethod">Preferred Communication:</label>
+            <select id="communicationMethod" name="communicationMethod" required>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+            </select><br>
+            <label for="userType">User Type:</label>
+            <select id="userType" name="userType" required>
+                <option value="consumer">Consumer</option>
+                <option value="retailer">Retailer</option>
+            </select><br>
+            <input type="submit" value="Subscribe">
+        </form>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grab&Go Platform. All rights reserved.</p>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        function loadSaleItems() {
+            fetch('/Final_java_project/consumer')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('saleItemsTable').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    data.forEach(item => {
+                        const row = tableBody.insertRow();
+                        row.insertCell().textContent = item.itemId;
+                        row.insertCell().textContent = item.itemName;
+                        row.insertCell().textContent = item.price;
+                        row.insertCell().textContent = item.availableQuantity; // Display available quantity
+                        const actionCell = row.insertCell();
+
+                        // Create a quantity input
+                        const quantityInput = document.createElement('input');
+                        quantityInput.type = 'number';
+                        quantityInput.min = 1;
+                        quantityInput.value = 1;
+                        quantityInput.style.width = '60px';
+
+                        // Create a purchase button
+                        const purchaseButton = document.createElement('button');
+                        purchaseButton.textContent = 'Purchase';
+                        purchaseButton.onclick = () => {
+                            const quantity = parseInt(quantityInput.value);
+                            if (quantity > 0 && quantity <= item.availableQuantity) {
+                                purchaseItem(item.itemId, quantity);
+                            } else {
+                                alert('Please enter a valid quantity.');
+                            }
+                        };
+
+                        actionCell.appendChild(quantityInput);
+                        actionCell.appendChild(purchaseButton);
+                    });
+                })
+                .catch(error => console.error('Error loading sale items:', error));
+        }
+
+        function purchaseItem(itemId, quantity) {
+            const userId = 1; // Replace with actual user ID from session or context
+            fetch('/Final_java_project/consumer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'purchaseItem',
+                    userId: userId,
+                    itemId: itemId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error purchasing item:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", loadSaleItems);
+    </script>
+</body>
+</html>

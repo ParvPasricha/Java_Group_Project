@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Charitable Organization Dashboard</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.jsp">Food Waste Reduction</a>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="/Final_java_project/logout">Home</a></li> <!-- Change to call logout -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Charitable Organization Dashboard</h1>
+        <h2>Available Surplus Items for Donation</h2>
+        <table id="donationItemsTable">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Available Quantity</th>
+                    <th>Expiration Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Donation items will be loaded here -->
+            </tbody>
+        </table>
+        <h2>Subscribe for Notifications</h2>
+        <form action="/Final_java_project/subscribe" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone"><br>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required><br>
+            <label for="preference">Food Preference:</label>
+            <input type="text" id="preference" name="preference"><br>
+            <label for="communicationMethod">Preferred Communication:</label>
+            <select id="communicationMethod" name="communicationMethod" required>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+            </select><br>
+            <label for="userType">User Type:</label>
+            <select id="userType" name="userType" required>
+                <option value="consumer">Consumer</option>
+                <option value="retailer">Retailer</option>
+            </select><br>
+            <input type="submit" value="Subscribe">
+        </form>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Food Waste Reduction Platform. All rights reserved.</p>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        function loadDonationItems() {
+            fetch('/Final_java_project/charitableOrganizationDashboard')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('donationItemsTable').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    data.forEach(item => {
+                        const row = tableBody.insertRow();
+                        row.insertCell().textContent = item.itemId;
+                        row.insertCell().textContent = item.itemName;
+                        row.insertCell().textContent = item.quantity; // Display available quantity
+                        row.insertCell().textContent = item.expirationDate;
+
+                        const actionCell = row.insertCell();
+                        const quantityInput = document.createElement('input');
+                        quantityInput.type = 'number';
+                        quantityInput.min = 1;
+                        quantityInput.value = 1;
+                        quantityInput.max = item.quantity;
+                        quantityInput.style.width = '60px';
+
+                        const claimButton = document.createElement('button');
+                        claimButton.textContent = 'Claim Item';
+                        claimButton.onclick = () => {
+                            const quantity = parseInt(quantityInput.value);
+                            if (quantity > 0 && quantity <= item.quantity) {
+                                claimItem(item.itemId, quantity);
+                            } else {
+                                alert('Please enter a valid quantity.');
+                            }
+                        };
+
+                        actionCell.appendChild(quantityInput);
+                        actionCell.appendChild(claimButton);
+                    });
+                })
+                .catch(error => console.error('Error loading donation items:', error));
+        }
+
+        function claimItem(itemId, quantity) {
+            const userId = 1; // Replace with actual user ID from session or context
+            fetch('/Final_java_project/charitableOrganizationDashboard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'claimItem',
+                    userId: userId,
+                    itemId: itemId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.text())
+            .then(message => alert(message))
+            .catch(error => console.error('Error claiming item:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", loadDonationItems);
+    </script>
+</body>
+</html>
